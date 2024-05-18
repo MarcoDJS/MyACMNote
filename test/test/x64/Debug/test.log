@@ -1,4 +1,0 @@
-﻿  FileName.cpp
-C:\Users\25767\Desktop\NK\test\test\FileName.cpp(53,19): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
-C:\Users\25767\Desktop\NK\test\test\FileName.cpp(68,19): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
-  test.vcxproj -> C:\Users\25767\Desktop\NK\test\x64\Debug\test.exe
