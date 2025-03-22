@@ -28,7 +28,7 @@ void dfs()
 	}
 }
 ```
-### 例题1：给定二叉搜索树的根节点root，返回值位于范围[low,high]之间的所有结点的值的和(根节点的值大于左子树，小于右子树)
+### 1.（1）例题：给定二叉搜索树的根节点root，返回值位于范围[low,high]之间的所有结点的值的和(根节点的值大于左子树，小于右子树)
 ![快排](./images/搜索/深/ex.png)<br>
 ![快排](./images/搜索/深/exmp.png)<br>
 ```C++
@@ -60,7 +60,7 @@ int rangesum(TreeNode* root, int low, int high)
 	//否则返回自己的val并继续搜索左右树
 }
 ```
-### 例题2：<br>
+### 1.（2）例题：<br>
 ![岛屿](./images/搜索/深/ex2.png)<br>
 ```C++
 #include<iostream>
@@ -130,7 +130,7 @@ int main()
 	return 0;
 }
 ```
-### 回溯算法（经典N皇后问题）
+### 1.（3）回溯算法（经典N皇后问题）
 采用试错的思想，它尝试分步的去解决一个问题。在分步解决问题的过程中，当它通过尝试发现现有的分步答案不能得到有效的正确的解答的时候，它将取消上一步甚至是上几步的计算，再通过其它的可能的分步解答再次尝试寻找问题的答案。<br>
 
 N皇后例题：<br>
@@ -283,7 +283,7 @@ void bfs()
 	}
 }
 ```
-### 例题：
+### 2.（1）例题：
 ![例题](./images/搜索/广/ex.png)
 ```C++
 #include<iostream>
@@ -390,7 +390,7 @@ int main()
 | **自底向上 DP** | `O(n)` | `O(n)` |  **属于** |
 | **空间优化 DP** | `O(n)` | `O(1)` |  **属于** |
 
-### 例题：斐波那契数列
+### 3.（1）斐波那契数列
 #### 递归+备忘录
 ```C++
 int fibMemo(int n, vector<int>& memo) {
@@ -442,11 +442,49 @@ int fibOptimized(int n) {
     
     return curr;
 }
-
 ```
+### 3.(2)利用动态规划解决最长上升子序列问题（LIS）
+- 对整个数组v[i]构造出另一个数组，即dp[i]来表示以i结尾的子序列的最大上升子序列的长度
+- 选择dp[i]中的最大值作为答案
+```C++
+#include<iostream>
+#include<vector>
+using namespace std;
+
+int main()
+{
+    int num;
+    vector<int> v;
+    while(cin>>num)
+    {
+        v.push_back(num);
+        if(getchar()=='\n')
+        {
+            break;
+        }
+    }
+    int n= v.size();
+    vector<int> dpMaxLength(n,1);//最长上升子序列长度至少为1（自身
+    int ans=0;//答案为dpMaxLength中的最大值
+    for(int i =0;i<n;i++)
+    {
+        for(int j=0;j<i;j++)
+        {
+            if(v[j]<v[i]) //如果在j位置有比i更小的
+            {
+                dpMaxLength[i]=max(dpMaxLength[i],dpMaxLength[j]+1);//存在一个可能最大值，即该位置j的最大长度+1，选择更大的
+            }
+        }
+        ans=max(ans,dpMaxLength[i]);
+    }
+    cout<<ans<<endl;
+    return 0;
+}
+```
+该算法复杂度最差为$n^2$，
 ## 4.滑动窗思想（双指针）
 该思想的基本思路是维护一个窗口（通常是一个区间），通过移动窗口的起始位置和结束位置，来遍历整个数组/字符串，并在过程中执行特定的操作。通过不断调整窗口的大小和位置，可以找到满足问题要求的解。<br>
-### 例题：
+### 4.（1）例题
 ![例题](./images/滑动窗/ex.png)<br>
 思路图例：<br>
 ![图](./images/滑动窗/graph.png)<br>
@@ -488,3 +526,41 @@ int main() {
     return 0;
 }
 ```
+## 5.树状数组
+[文章引用](https://blog.csdn.net/TheWayForDream/article/details/118436732)<br>
+树状数组用了二进制的性质，把区间划分成若干个长度为 2 的幂的区间，并将其信息维护在数组中，这里维护的信息以叶节点的值的和为例，比如t[4]=a[1]+a[2]+a[3]+a[4],如图所示
+![alt text](image.png)
+### lowbit
+lowbit函数可以得到某个二进制数字最低位的1和后面的0构成的数字，例如lowbit(10110)=10=2
+- 计算方法：lowbit(x)=x&(-x)
+
+例：
+```
+x=010110
+-x=101001+1=101011
+x&(-x)=10
+```
+### 单点修改
+例如我们对a[1]+k，那么祖先节点t[1],t[2],t[4],t[8]都需要+k更新
+```C++
+int add(int x,int k)
+{
+	for(int i=x;i<=n;i+=lowbit(i))
+	t[i]+=k;
+}
+```
+在循环中，lowbit分别为1，10，100，i的值分别为1，1+1=10，10+10=100，100+100=1000<br>
+修改复杂度为logn
+### 区间查询
+例如查询前7项的区间和sum[7]=t[4]+t[6]+t[7]
+```C++
+int query(x){
+	int sum = 0;
+	for(int i=x;i;i-=lowbit(i)){
+		sum+=t[i];
+	}
+	return sum;
+}
+```
+在循环中，lowbit分别为1，10，i的值分别为111，111-1=110，110-10=100<br>
+查询复杂度也为logn
